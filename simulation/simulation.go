@@ -128,15 +128,6 @@ func GenerateBalls(n int) []Ball {
 	for i := range balls {
 		center := []float64{math.Max(50, rand.Float64()*750), math.Max(50, rand.Float64()*550)}
 		radius := math.Max(15, rand.Float64()*30)
-		if i == 0 {
-		} else {
-			for j := range i {
-				for math.Sqrt(math.Pow(center[0]-centers[j][0], 2)+math.Pow(center[1]-centers[j][1], 2)) < radius+balls[j].R {
-					center[0] = math.Max(50, rand.Float64()*750)
-					center[1] = math.Max(50, rand.Float64()*550)
-				}
-			}
-		}
 		centers[i] = center
 		balls[i] = Ball{
 			R:     radius,
