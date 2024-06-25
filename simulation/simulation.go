@@ -51,10 +51,10 @@ func dumbCollisionDetection(balls []Ball) {
 				balls[j].VX = balls[j].VX - massConst2*const2*c21[0]
 				balls[j].VY = balls[j].VY - massConst2*const2*c21[1]
 
-        // Ensure there is no clipping
-        balls[i].X = balls[j].X + (balls[i].R + balls[j].R) * (balls[i].X - balls[j].X) / dist
-        balls[i].Y = balls[j].Y + (balls[i].R + balls[j].R) * (balls[i].Y - balls[j].Y) / dist
-        
+				// Ensure there is no clipping
+				balls[i].X = balls[j].X + (balls[i].R+balls[j].R)*(balls[i].X-balls[j].X)/dist
+				balls[i].Y = balls[j].Y + (balls[i].R+balls[j].R)*(balls[i].Y-balls[j].Y)/dist
+
 				// if balls[i].R > balls[j].R {
 				// 	balls[j].Color = balls[i].Color
 				// } else {
@@ -66,22 +66,22 @@ func dumbCollisionDetection(balls []Ball) {
 }
 
 func (s *Simulation) wallCollisionDetection(ball Ball) {
-		if ball.X-ball.R <= 0 {
-			ball.VX = -ball.VX
-			ball.X = ball.R
-		}
-		if ball.X+ball.R >= s.Width {
-			ball.VX = -ball.VX
-			ball.X = s.Width - ball.R
-		}
-		if ball.Y-ball.R <= 0 {
-			ball.VY = -ball.VY
-			ball.Y = ball.R
-		}
-		if ball.Y+ball.R >= s.Height {
-			ball.VY = -ball.VY
-			ball.Y = s.Height - ball.R
-		}
+	if ball.X-ball.R <= 0 {
+		ball.VX = -ball.VX
+		ball.X = ball.R
+	}
+	if ball.X+ball.R >= s.Width {
+		ball.VX = -ball.VX
+		ball.X = s.Width - ball.R
+	}
+	if ball.Y-ball.R <= 0 {
+		ball.VY = -ball.VY
+		ball.Y = ball.R
+	}
+	if ball.Y+ball.R >= s.Height {
+		ball.VY = -ball.VY
+		ball.Y = s.Height - ball.R
+	}
 }
 
 func (s *Simulation) Update(dt float64) {
@@ -122,19 +122,26 @@ func randomColor() string {
 	return colors[ind]
 }
 
+func randomDirection() float64 {
+	if rand.Intn(2) == 0 {
+		return -1.0
+	}
+	return 1.0
+}
+
 func GenerateBalls(n int) []Ball {
 	balls := make([]Ball, n)
 	centers := make([][]float64, n)
 	for i := range balls {
 		center := []float64{math.Max(50, rand.Float64()*750), math.Max(50, rand.Float64()*550)}
-		radius := math.Max(15, rand.Float64()*30)
+		radius := math.Max(10, rand.Float64()*20)
 		centers[i] = center
 		balls[i] = Ball{
 			R:     radius,
 			X:     center[0],
 			Y:     center[1],
-			VX:    rand.Float64() * 3,
-			VY:    rand.Float64() * 3,
+			VX:    randomDirection() * rand.Float64() * 3,
+			VY:    randomDirection() * rand.Float64() * 3,
 			Color: randomColor(),
 		}
 	}
