@@ -8,9 +8,10 @@ import (
 	"strconv"
 	"time"
 
-  "collide/simulation"
-)
+	"collide/simulation"
 
+	"github.com/rs/cors"
+)
 
 func main() {
 	n, err := strconv.Atoi(os.Args[2])
@@ -33,7 +34,9 @@ func main() {
 	dt := 1.0
 
 	http.HandleFunc("/simulation", func(w http.ResponseWriter, r *http.Request) {
-		sim.Update(dt)
+		sim.Mu.Lock()
+		defer sim.Mu.Unlock()
+
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(sim); err != nil {
 			log.Println("Error encoding JSON:", err)
@@ -42,17 +45,20 @@ func main() {
 
 	go func() {
 		for {
+			start := time.Now()
 			sim.Update(dt)
+			duration := time.Since(start)
+			log.Println("Frametime:", duration)
 			// time.Sleep(16 * time.Millisecond)
 			time.Sleep(time.Second / time.Duration(framerate))
 
 		}
 	}()
 
-	http.Handle("/", http.FileServer(http.Dir("./frontend")))
-
-	log.Println("Starting server on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	// http.Handle("/", http.FileServer(http.Dir("./frontend")))
+	handler := cors.Default().Handler(http.DefaultServeMux)
+	log.Println("Starting server on http://localhost:8000")
+	if err := http.ListenAndServe(":8000", handler); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 }
