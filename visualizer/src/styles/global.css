@@ -1,8 +1,13 @@
+nav {
+  display: block;
+  float: top;
+}
+
 body {
   background-color: #282828;
   color: #ebdbb2;
   font-family: Arial, sans-serif;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   height: 100vh;

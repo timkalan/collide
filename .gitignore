@@ -1,0 +1,27 @@
+/node_modules/
+/visualizer/node_modules/
+/visualizer/public/build/
+
+.DS_Store
+
+visualizer/node_modules
+
+# Output
+visualizer/.output
+visualizer/.vercel
+visualizer/.svelte-kit
+visualizer/build
+
+# OS
+visualizer/.DS_Store
+visualizer/Thumbs.db
+
+# Env
+visualizer/.env
+visualizer/.env.*
+!.env.example
+!.env.test
+
+# Vite
+visualizer/vite.config.js.timestamp-*
+visualizer/vite.config.ts.timestamp-*
