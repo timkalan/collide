@@ -33,6 +33,20 @@ func main() {
 	// dt := 1.0 / float64(framerate)
 	dt := 1.0
 
+	http.HandleFunc("/pause", func(w http.ResponseWriter, r *http.Request) {
+		sim.Mu.Lock()
+		defer sim.Mu.Unlock()
+		sim.Paused = true
+		w.WriteHeader(http.StatusOK)
+	})
+
+	http.HandleFunc("/resume", func(w http.ResponseWriter, r *http.Request) {
+		sim.Mu.Lock()
+		defer sim.Mu.Unlock()
+		sim.Paused = false
+		w.WriteHeader(http.StatusOK)
+	})
+
 	http.HandleFunc("/simulation", func(w http.ResponseWriter, r *http.Request) {
 		sim.Mu.Lock()
 		defer sim.Mu.Unlock()
@@ -45,14 +59,16 @@ func main() {
 
 	go func() {
 		for {
-			start := time.Now()
-			sim.Update(dt)
-			duration := time.Since(start)
-			log.Println("Frametime:", duration)
+			if !sim.Paused {
+				start := time.Now()
+				sim.Update(dt)
+				duration := time.Since(start)
+				log.Println("Frametime:", duration)
+			}
 			// time.Sleep(16 * time.Millisecond)
 			time.Sleep(time.Second / time.Duration(framerate))
-
 		}
+
 	}()
 
 	// http.Handle("/", http.FileServer(http.Dir("./frontend")))

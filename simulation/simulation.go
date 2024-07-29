@@ -21,6 +21,7 @@ type Simulation struct {
 	Height  float64 `json:"height"`
 	Gravity float64 `json:"gravity"`
 	Balls   []Ball  `json:"balls"`
+	Paused  bool    `json:"paused"`
 	Mu      sync.Mutex
 }
 
@@ -120,9 +121,9 @@ func sweepAndPruneCollisionDetection(balls []Ball) {
 				balls[i].X = active[j].X + (balls[i].R+active[j].R)*(balls[i].X-active[j].X)/dist
 				balls[i].Y = active[j].Y + (balls[i].R+active[j].R)*(balls[i].Y-active[j].Y)/dist
 
-        // Update active
-        numActive ++
-        active[numActive] = balls[i]
+				// Update active
+				numActive++
+				active[numActive] = balls[i]
 			}
 		}
 	}
