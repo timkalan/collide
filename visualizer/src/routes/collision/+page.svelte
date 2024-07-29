@@ -49,8 +49,7 @@
   };
 
   const startSimulation = async () => {
-    simulationRunning = true;
-    fetchData();
+    await fetchData();
     interval = setInterval(fetchData, 16);
     try {
       const res = await fetch('http://localhost:8000/resume', {
@@ -58,6 +57,7 @@
       });
       if (res.ok) {
         console.log('Server resumed');
+        await fetchData();
       } else {
         console.error('Failed to resume server:', res.status);
       }
@@ -67,7 +67,6 @@
   };
 
   const stopSimulation = async () => {
-    simulationRunning = false;
     clearInterval(interval);
     try {
       const res = await fetch('http://localhost:8000/pause', {
@@ -75,6 +74,7 @@
       });
       if (res.ok) {
         console.log('Server paused');
+        await fetchData();
       } else {
         console.error('Failed to pause server:', res.status);
       }
@@ -85,6 +85,7 @@
 
   onMount(async () => {
     await fetchData();
+    interval = setInterval(fetchData, 16);
     console.log(simulationRunning);
   });
 </script>
