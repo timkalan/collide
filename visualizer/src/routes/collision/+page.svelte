@@ -18,6 +18,7 @@
   let war: boolean;
   let fps: number = 60;
   let gravity: number = 0.0;
+  let size: number = 10;
   let interval: number;
 
   const fetchData = async () => {
@@ -31,6 +32,7 @@
       war = data.war;
       fps = data.fps;
       gravity = data.gravity;
+      size = data.size;
       draw();
     } else {
       console.error('Failed to fetch data:', res.status);
@@ -143,6 +145,28 @@
     }
   };
 
+  const changeSize = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/size', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charser=UTF-8'
+        },
+        body: JSON.stringify({
+          size: (<HTMLInputElement>document.getElementById('size')).value
+        })
+      });
+      if (res.ok) {
+        console.log('Changed size');
+        await fetchData();
+      } else {
+        console.error('Failed to change size', res.status);
+      }
+    } catch (err) {
+      console.error('Failed to change size', err);
+    }
+  };
+
   const changeBallNumber = async () => {
     const quantity = parseInt((<HTMLInputElement>document.getElementById('quantity')).value);
     if (quantity < 1 || quantity > 500) {
@@ -199,6 +223,16 @@
       class="slider"
       id="gravity"
       on:change={changeGravity}
+    />
+    <p>Size:</p>
+    <input
+      type="range"
+      min="1"
+      max="20"
+      value={size}
+      class="slider"
+      id="size"
+      on:change={changeSize}
     />
   </div>
   <div class="canvas">

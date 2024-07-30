@@ -32,12 +32,12 @@ func randomDirection() float64 {
 	return 1.0
 }
 
-func GenerateBalls(n int) []Ball {
+func (s *Simulation) GenerateBalls(n int) {
 	balls := make([]Ball, n)
 	centers := make([][]float64, n)
 	for i := range balls {
 		center := []float64{math.Max(50, rand.Float64()*750), math.Max(50, rand.Float64()*550)}
-		radius := math.Max(10, rand.Float64()*20)
+		radius := math.Max(1, rand.Float64()*2) * s.SizeMultiplier
 		centers[i] = center
 		balls[i] = Ball{
 			R:     radius,
@@ -48,5 +48,11 @@ func GenerateBalls(n int) []Ball {
 			Color: randomColor(),
 		}
 	}
-	return balls
+	s.Balls = balls
+}
+
+func (s *Simulation) UpdateBallSize() {
+  for i := range s.Balls {
+    s.Balls[i].R *= s.SizeMultiplier / s.OldSizeMultiplier
+  }
 }

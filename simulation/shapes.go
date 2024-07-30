@@ -14,12 +14,14 @@ type Ball struct {
 }
 
 type Simulation struct {
-	Width   float64 `json:"width"`
-	Height  float64 `json:"height"`
-	Gravity float64 `json:"gravity"`
-	Balls   []Ball  `json:"balls"`
-	Paused  bool    `json:"paused"`
-	War     bool    `json:"war"`
-	FPS     float64 `json:"fps"`
-	Mu      sync.Mutex
+	Width             float64 `json:"width"`
+	Height            float64 `json:"height"`
+	Gravity           float64 `json:"gravity"`
+	SizeMultiplier    float64 `json:"size"`
+	Balls             []Ball  `json:"balls"`
+	Paused            bool    `json:"paused"`
+	War               bool    `json:"war"`
+	FPS               float64 `json:"fps"`
+	Mu                sync.Mutex
+	OldSizeMultiplier float64
 }
