@@ -16,6 +16,7 @@
   let height = 600;
   let paused: boolean;
   let war: boolean;
+  let fps: number = 60;
   let interval: number;
 
   const fetchData = async () => {
@@ -27,6 +28,7 @@
       height = data.height;
       paused = data.paused;
       war = data.war;
+      fps = data.fps;
       draw();
     } else {
       console.error('Failed to fetch data:', res.status);
@@ -116,6 +118,32 @@
       console.error('Failed to end war', err);
     }
   };
+
+  const changeBallNumber = async () => {
+    const quantity = parseInt((<HTMLInputElement>document.getElementById('quantity')).value);
+    if (quantity < 1 || quantity > 500) {
+      console.error('Invalid quantity:', quantity);
+      return;
+    }
+    try {
+      const res = await fetch('http://localhost:8000/changeballnumber', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: JSON.stringify({ n: quantity })
+      });
+      if (res.ok) {
+        console.log('Ball number changed');
+        await fetchData();
+      } else {
+        console.error('Failed to change ball number:', res.status);
+      }
+    } catch (err) {
+      console.error('Failed to change ball number:', err);
+    }
+  };
+
   onMount(async () => {
     await fetchData();
     interval = setInterval(fetchData, 16);
@@ -126,14 +154,7 @@
   <div class="title">
     <h1>Multi-body collision</h1>
   </div>
-  <div class="description">
-    <p>
-      <!-- This simulation demonstrates how multiple balls collide within a confined space. Click "Start" -->
-      <!-- to begin the simulation and "Stop" to pause it. -->
-    </p>
-  </div>
-
-  <div class="controls">
+  <div class="buttons">
     {#if !paused}
       <button on:click={stopSimulation}>Stop</button>
     {:else}
@@ -145,5 +166,15 @@
       <button on:click={stopWar}>Reset</button>
     {/if}
   </div>
-  <canvas id="simulationCanvas" {width} {height}></canvas>
+  <div class="canvas">
+    <canvas id="simulationCanvas" {width} {height}></canvas>
+  </div>
+  <div class="balls">
+    <label for="quantity">Quantity (between 1 and 500):</label>
+    <input type="number" id="quantity" name="quantity" min="1" max="500" />
+    <button on:click={changeBallNumber}>Submit</button>
+  </div>
+  <div class="infoview">
+    <p>FPS: {fps.toFixed(0)}</p>
+  </div>
 </main>

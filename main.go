@@ -58,7 +58,22 @@ func main() {
 		sim.Mu.Lock()
 		defer sim.Mu.Unlock()
 		sim.War = false
-    sim.RandomizeColors()
+		sim.RandomizeColors()
+		w.WriteHeader(http.StatusOK)
+	})
+
+	http.HandleFunc("/changeballnumber", func(w http.ResponseWriter, r *http.Request) {
+		sim.Mu.Lock()
+		defer sim.Mu.Unlock()
+		dec := json.NewDecoder(r.Body)
+
+		var data map[string]int
+		err := dec.Decode(&data)
+		if err != nil {
+			log.Println("Error decoding JSON:", err)
+		}
+		n = data["n"]
+		sim.Balls = simulation.GenerateBalls(n)
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -78,7 +93,7 @@ func main() {
 				start := time.Now()
 				sim.Update(dt)
 				duration := time.Since(start)
-				log.Println("Frametime:", duration)
+				sim.FPS = 1.0 / duration.Seconds()
 			}
 			// time.Sleep(16 * time.Millisecond)
 			time.Sleep(time.Second / time.Duration(framerate))

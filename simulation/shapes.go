@@ -20,5 +20,6 @@ type Simulation struct {
 	Balls   []Ball  `json:"balls"`
 	Paused  bool    `json:"paused"`
 	War     bool    `json:"war"`
+	FPS     float64 `json:"fps"`
 	Mu      sync.Mutex
 }
