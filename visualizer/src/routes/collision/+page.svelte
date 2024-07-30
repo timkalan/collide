@@ -14,7 +14,8 @@
   let balls: Ball[] = [];
   let width = 800;
   let height = 600;
-  let simulationRunning: boolean;
+  let paused: boolean;
+  let war: boolean;
   let interval: number;
 
   const fetchData = async () => {
@@ -24,7 +25,8 @@
       balls = data.balls;
       width = data.width;
       height = data.height;
-      simulationRunning = !data.paused;
+      paused = data.paused;
+      war = data.war;
       draw();
     } else {
       console.error('Failed to fetch data:', res.status);
@@ -83,10 +85,40 @@
     }
   };
 
+  const startWar = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/startwar', {
+        method: 'POST'
+      });
+      if (res.ok) {
+        console.log('War started');
+        await fetchData();
+      } else {
+        console.error('Failed to start war', res.status);
+      }
+    } catch (err) {
+      console.error('Failed to start war', err);
+    }
+  };
+
+  const stopWar = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/stopwar', {
+        method: 'POST'
+      });
+      if (res.ok) {
+        console.log('War ended');
+        await fetchData();
+      } else {
+        console.error('Failed to end war', res.status);
+      }
+    } catch (err) {
+      console.error('Failed to end war', err);
+    }
+  };
   onMount(async () => {
     await fetchData();
     interval = setInterval(fetchData, 16);
-    console.log(simulationRunning);
   });
 </script>
 
@@ -102,10 +134,15 @@
   </div>
 
   <div class="controls">
-    {#if simulationRunning}
+    {#if !paused}
       <button on:click={stopSimulation}>Stop</button>
     {:else}
       <button on:click={startSimulation}>Start</button>
+    {/if}
+    {#if !war}
+      <button on:click={startWar}>Fight!</button>
+    {:else}
+      <button on:click={stopWar}>Reset</button>
     {/if}
   </div>
   <canvas id="simulationCanvas" {width} {height}></canvas>

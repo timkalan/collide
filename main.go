@@ -47,6 +47,21 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	})
 
+	http.HandleFunc("/startwar", func(w http.ResponseWriter, r *http.Request) {
+		sim.Mu.Lock()
+		defer sim.Mu.Unlock()
+		sim.War = true
+		w.WriteHeader(http.StatusOK)
+	})
+
+	http.HandleFunc("/stopwar", func(w http.ResponseWriter, r *http.Request) {
+		sim.Mu.Lock()
+		defer sim.Mu.Unlock()
+		sim.War = false
+    sim.RandomizeColors()
+		w.WriteHeader(http.StatusOK)
+	})
+
 	http.HandleFunc("/simulation", func(w http.ResponseWriter, r *http.Request) {
 		sim.Mu.Lock()
 		defer sim.Mu.Unlock()
