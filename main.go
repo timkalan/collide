@@ -72,8 +72,26 @@ func main() {
 		if err != nil {
 			log.Println("Error decoding JSON:", err)
 		}
-		n = data["n"]
-		sim.Balls = simulation.GenerateBalls(n)
+		numBalls := data["n"]
+		sim.Balls = simulation.GenerateBalls(numBalls)
+		w.WriteHeader(http.StatusOK)
+	})
+
+	http.HandleFunc("/gravity", func(w http.ResponseWriter, r *http.Request) {
+		sim.Mu.Lock()
+		defer sim.Mu.Unlock()
+		dec := json.NewDecoder(r.Body)
+
+		var data map[string]string
+		err := dec.Decode(&data)
+		if err != nil {
+			log.Println("Error decoding JSON:", err)
+		}
+		gravity, err := strconv.ParseFloat(data["gravity"], 64)
+		if err != nil {
+			log.Println("Error parsing gravity:", err)
+		}
+		sim.Gravity = gravity
 		w.WriteHeader(http.StatusOK)
 	})
 

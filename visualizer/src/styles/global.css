@@ -21,6 +21,29 @@ canvas {
   background-color: #1d2021;
 }
 
+p {
+  margin-left: 1rem;
+}
+
+input {
+  margin: 1rem;
+  padding: 0.5rem;
+  width: 100px;
+}
+
+button {
+  /* border: 2px solid #458588; */
+  margin: 1rem;
+  background-color: #b16286;
+  color: white;
+  width: 120px;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
 .title {
   margin: 1rem;
   text-align: center;
@@ -32,12 +55,6 @@ canvas {
   align-items: center;
   margin: 1rem;
 }
-
-/* .controls { */
-/*   float: center; */
-/*   align-self: center; */
-/*   margin: 1rem; */
-/* } */
 
 .buttons {
   display: flex;
@@ -59,21 +76,26 @@ canvas {
   margin: 1rem;
 }
 
-input {
-  margin: 1rem;
-  padding: 0.5rem;
-  width: 100px;
+/* set slider colors */
+.slider {
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 15px;
+  border-radius: 5px;
+  background: #fabd2f;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
 }
 
-button {
-  /* border: 2px solid #458588; */
-  margin: 1rem;
-  background-color: #b16286;
-  color: white;
-  width: 120px;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 5px;
+  background: #458588;
+  cursor: pointer;
 }

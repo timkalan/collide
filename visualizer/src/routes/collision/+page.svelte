@@ -17,6 +17,7 @@
   let paused: boolean;
   let war: boolean;
   let fps: number = 60;
+  let gravity: number = 0.0;
   let interval: number;
 
   const fetchData = async () => {
@@ -29,6 +30,7 @@
       paused = data.paused;
       war = data.war;
       fps = data.fps;
+      gravity = data.gravity;
       draw();
     } else {
       console.error('Failed to fetch data:', res.status);
@@ -119,6 +121,28 @@
     }
   };
 
+  const changeGravity = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/gravity', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charser=UTF-8'
+        },
+        body: JSON.stringify({
+          gravity: (<HTMLInputElement>document.getElementById('gravity')).value
+        })
+      });
+      if (res.ok) {
+        console.log('Changed gravity');
+        await fetchData();
+      } else {
+        console.error('Failed to change gravity', res.status);
+      }
+    } catch (err) {
+      console.error('Failed to change gravity', err);
+    }
+  };
+
   const changeBallNumber = async () => {
     const quantity = parseInt((<HTMLInputElement>document.getElementById('quantity')).value);
     if (quantity < 1 || quantity > 500) {
@@ -165,14 +189,31 @@
     {:else}
       <button on:click={stopWar}>Reset</button>
     {/if}
+    <p>Gravity:</p>
+    <input
+      type="range"
+      min="0.0"
+      max="0.1"
+      step="0.01"
+      value={gravity}
+      class="slider"
+      id="gravity"
+      on:change={changeGravity}
+    />
   </div>
   <div class="canvas">
     <canvas id="simulationCanvas" {width} {height}></canvas>
   </div>
   <div class="balls">
     <label for="quantity">Quantity (between 1 and 500):</label>
-    <input type="number" id="quantity" name="quantity" min="1" max="500" />
-    <button on:click={changeBallNumber}>Submit</button>
+    <input
+      type="number"
+      id="quantity"
+      name="quantity"
+      min="1"
+      max="500"
+      on:change={changeBallNumber}
+    />
   </div>
   <div class="infoview">
     <p>FPS: {fps.toFixed(0)}</p>
