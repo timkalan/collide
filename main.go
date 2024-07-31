@@ -24,6 +24,7 @@ func main() {
 		Height:         600,
 		Gravity:        0,
 		SizeMultiplier: 10,
+		Paused:         true,
 	}
 
 	sim.GenerateBalls(n)
@@ -111,7 +112,7 @@ func main() {
 		if err != nil {
 			log.Println("Error parsing size:", err)
 		}
-    sim.OldSizeMultiplier = sim.SizeMultiplier
+		sim.OldSizeMultiplier = sim.SizeMultiplier
 		sim.SizeMultiplier = size
 		sim.UpdateBallSize()
 		w.WriteHeader(http.StatusOK)
@@ -141,7 +142,6 @@ func main() {
 
 	}()
 
-	// http.Handle("/", http.FileServer(http.Dir("./frontend")))
 	handler := cors.Default().Handler(http.DefaultServeMux)
 	log.Println("Starting server on http://localhost:8000")
 	if err := http.ListenAndServe(":8000", handler); err != nil {

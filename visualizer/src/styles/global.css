@@ -44,22 +44,38 @@ button {
   font-size: 16px;
 }
 
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* background-color: #333; */
+}
+
+li {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+
 .title {
   margin: 1rem;
   text-align: center;
 }
 
-.infoview {
+.textbox {
+  background: #ebdbb2;
+  font-family:
+    JetBrains Mono,
+    monospace;
+}
+
+.controls {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 1rem;
-}
-
-.buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  float: center;
 }
 
 .canvas {
@@ -67,16 +83,9 @@ button {
   justify-content: center;
   align-items: center;
   margin: 1rem;
+  float: center;
 }
 
-.balls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 1rem;
-}
-
-/* set slider colors */
 .slider {
   padding: 0;
   -webkit-appearance: none;

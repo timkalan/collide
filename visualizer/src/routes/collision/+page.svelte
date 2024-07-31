@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   // import "./global.css";
 
   interface Ball {
@@ -82,7 +82,6 @@
       });
       if (res.ok) {
         console.log('Server paused');
-        await fetchData();
       } else {
         console.error('Failed to pause server:', res.status);
       }
@@ -194,15 +193,19 @@
 
   onMount(async () => {
     await fetchData();
-    interval = setInterval(fetchData, 16);
+  });
+
+  onDestroy(async () => {
+    clearInterval(interval);
+    await stopSimulation();
   });
 </script>
 
 <main>
-  <div class="title">
-    <h1>Multi-body collision</h1>
-  </div>
-  <div class="buttons">
+  <!-- <div class="title"> -->
+  <!--   <h1>Multi-body collision</h1> -->
+  <!-- </div> -->
+  <div class="controls">
     {#if !paused}
       <button on:click={stopSimulation}>Stop</button>
     {:else}
@@ -213,43 +216,53 @@
     {:else}
       <button on:click={stopWar}>Reset</button>
     {/if}
-    <p>Gravity:</p>
-    <input
-      type="range"
-      min="0.0"
-      max="0.1"
-      step="0.01"
-      value={gravity}
-      class="slider"
-      id="gravity"
-      on:change={changeGravity}
-    />
-    <p>Size:</p>
-    <input
-      type="range"
-      min="1"
-      max="20"
-      value={size}
-      class="slider"
-      id="size"
-      on:change={changeSize}
-    />
-  </div>
-  <div class="canvas">
-    <canvas id="simulationCanvas" {width} {height}></canvas>
-  </div>
-  <div class="balls">
-    <label for="quantity">Quantity (between 1 and 500):</label>
+    <label for="quantity">Balls (1-500):</label>
     <input
       type="number"
       id="quantity"
       name="quantity"
       min="1"
       max="500"
+      value={balls.length}
+      class="textbox"
       on:change={changeBallNumber}
     />
+    <ul>
+      <li>
+        <p>Gravity:</p>
+      </li>
+      <li>
+        <input
+          type="range"
+          min="0.0"
+          max="0.1"
+          step="0.01"
+          value={gravity}
+          class="slider"
+          id="gravity"
+          on:change={changeGravity}
+        />
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <p>Size:</p>
+      </li>
+      <li>
+        <input
+          type="range"
+          min="1"
+          max="20"
+          value={size}
+          class="slider"
+          id="size"
+          on:change={changeSize}
+        />
+      </li>
+    </ul>
+    <!-- <p>FPS: {fps.toFixed(0)}</p> -->
   </div>
-  <div class="infoview">
-    <p>FPS: {fps.toFixed(0)}</p>
+  <div class="canvas">
+    <canvas id="simulationCanvas" {width} {height}></canvas>
   </div>
 </main>
