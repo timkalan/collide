@@ -26,6 +26,7 @@ func main() {
 	sim.GenerateBalls(100)
 
 	dt := 1.0
+  velocity := -0.001
 
 	pi := &simulation.Pillision{
 		Width:            800,
@@ -42,7 +43,7 @@ func main() {
 		BigSquare: simulation.Square{
 			TopLeft:     simulation.Point{X: 300, Y: 200},
 			BottomRight: simulation.Point{X: 500, Y: 400},
-			Velocity:    -0.5,
+			Velocity:    velocity,
 			Weight:      100,
 		},
 	}
@@ -154,7 +155,7 @@ func main() {
 		pi.Mu.Lock()
 		defer pi.Mu.Unlock()
 		pi.Paused = true
-		pi.Reset()
+		pi.Reset(velocity)
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -174,7 +175,7 @@ func main() {
 		err := dec.Decode(&data)
 		if err != nil {
 			log.Println("Error decoding JSON:", err)
-			pi.Reset()
+			pi.Reset(velocity)
 			return
 		}
 		weight, err := strconv.ParseFloat(data["weight"], 64)
@@ -215,7 +216,7 @@ func main() {
 			if !pi.Paused {
 				pi.Update()
 			}
-			time.Sleep(16 * time.Millisecond)
+			time.Sleep(time.Microsecond)
 		}
 
 	}()

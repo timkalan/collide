@@ -64,7 +64,7 @@ func (s *Simulation) Reset() {
 	s.Gravity = 0
 }
 
-func (pi *Pillision) Reset() {
+func (pi *Pillision) Reset(velocity float64) {
 	pi.Paused = true
 	pi.NumCollisions = 0
 	pi.SmallSquare.TopLeft.X = 100
@@ -72,5 +72,5 @@ func (pi *Pillision) Reset() {
 	pi.SmallSquare.Velocity = 0
 	pi.BigSquare.TopLeft.X = 300
 	pi.BigSquare.BottomRight.X = 500
-	pi.BigSquare.Velocity = -0.5
+	pi.BigSquare.Velocity = velocity
 }

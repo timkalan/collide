@@ -5,6 +5,10 @@ func (pi *Pillision) wallCollisionDetection() {
 		pi.BigSquare.Velocity *= -1
 		pi.BigSquare.TopLeft.X = 0
 	}
+ //  if pi.BigSquare.TopLeft.X <= pi.SmallSquare.Width {
+	// 	pi.BigSquare.Velocity *= -1
+	// 	pi.BigSquare.TopLeft.X = pi.SmallSquare.Width
+	// }
 	if pi.SmallSquare.TopLeft.X <= 0 {
 		pi.SmallSquare.Velocity *= -1
 		pi.SmallSquare.TopLeft.X = 0
@@ -27,23 +31,18 @@ func (pi *Pillision) squareCollisionDetection() {
 		pi.SmallSquare.Velocity = pi.SmallSquare.Velocity - massConst2*v21
 
 		// Ensure there is no clipping
-    // pi.BigSquare.TopLeft.X = pi.SmallSquare.BottomRight.X
-    // pi.BigSquare.BottomRight.X = pi.BigSquare.TopLeft.X + pi.BigSquare.Width
+		// pi.BigSquare.TopLeft.X = pi.SmallSquare.BottomRight.X
+		// pi.BigSquare.BottomRight.X = pi.BigSquare.TopLeft.X + pi.BigSquare.Width
 	}
 }
 
 func (pi *Pillision) Update() {
+	pi.wallCollisionDetection()
+	pi.squareCollisionDetection()
+
 	// move squares according to velocity
 	pi.BigSquare.TopLeft.X += pi.BigSquare.Velocity
 	pi.BigSquare.BottomRight.X += pi.BigSquare.Velocity
 	pi.SmallSquare.TopLeft.X += pi.SmallSquare.Velocity
 	pi.SmallSquare.BottomRight.X += pi.SmallSquare.Velocity
-
-  if pi.BigSquare.TopLeft.X <= pi.SmallSquare.Width {
-		pi.BigSquare.Velocity *= -1
-		pi.BigSquare.TopLeft.X = pi.SmallSquare.Width
-  }
-
-	pi.wallCollisionDetection()
-	pi.squareCollisionDetection()
 }
