@@ -82,6 +82,9 @@
       });
       if (res.ok) {
         console.log('Server paused');
+        if (window.location.pathname === '/collision') {
+          await fetchData();
+        }
       } else {
         console.error('Failed to pause server:', res.status);
       }

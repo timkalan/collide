@@ -52,7 +52,25 @@ func (s *Simulation) GenerateBalls(n int) {
 }
 
 func (s *Simulation) UpdateBallSize() {
-  for i := range s.Balls {
-    s.Balls[i].R *= s.SizeMultiplier / s.OldSizeMultiplier
-  }
+	for i := range s.Balls {
+		s.Balls[i].R *= s.SizeMultiplier / s.OldSizeMultiplier
+	}
+}
+
+func (s *Simulation) Reset() {
+	s.Paused = true
+	s.War = false
+	s.GenerateBalls(100)
+	s.Gravity = 0
+}
+
+func (pi *Pillision) Reset() {
+	pi.Paused = true
+	pi.NumCollisions = 0
+	pi.SmallSquare.TopLeft.X = 100
+	pi.SmallSquare.BottomRight.X = 200
+	pi.SmallSquare.Velocity = 0
+	pi.BigSquare.TopLeft.X = 300
+	pi.BigSquare.BottomRight.X = 500
+	pi.BigSquare.Velocity = -0.5
 }
