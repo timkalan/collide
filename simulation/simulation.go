@@ -112,5 +112,5 @@ func (s *Simulation) Update(dt float64) {
 		s.wallCollisionDetection(i)
 	}
 	s.sweepAndPruneCollisionDetection()
-	s.dumbCollisionDetection()
+	// s.dumbCollisionDetection()
 }
