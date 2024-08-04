@@ -171,7 +171,7 @@
 
   const changeBallNumber = async () => {
     const quantity = parseInt((<HTMLInputElement>document.getElementById('quantity')).value);
-    if (quantity < 1 || quantity > 500) {
+    if (quantity < 1 || quantity > 1000) {
       console.error('Invalid quantity:', quantity);
       return;
     }
@@ -219,13 +219,13 @@
     {:else}
       <button on:click={stopWar}>Reset</button>
     {/if}
-    <label for="quantity">Balls (1-500):</label>
+    <label for="quantity">Balls (1-1000):</label>
     <input
       type="number"
       id="quantity"
       name="quantity"
       min="1"
-      max="500"
+      max="1000"
       value={balls.length}
       class="textbox"
       on:change={changeBallNumber}

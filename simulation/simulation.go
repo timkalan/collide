@@ -24,80 +24,72 @@ func (s *Simulation) wallCollisionDetection(i int) {
 	}
 }
 
-func (s *Simulation) dumbCollisionDetection() {
-	for i := 0; i < len(s.Balls); i++ {
-		for j := i + 1; j < len(s.Balls); j++ {
-			dx := s.Balls[i].X - s.Balls[j].X
-			dy := s.Balls[i].Y - s.Balls[j].Y
-			dist := math.Sqrt(dx*dx + dy*dy)
-			v12 := []float64{s.Balls[i].VX - s.Balls[j].VX, s.Balls[i].VY - s.Balls[j].VY}
-			v21 := []float64{s.Balls[j].VX - s.Balls[i].VX, s.Balls[j].VY - s.Balls[i].VY}
-			c12 := []float64{s.Balls[i].X - s.Balls[j].X, s.Balls[i].Y - s.Balls[j].Y}
-			c21 := []float64{s.Balls[j].X - s.Balls[i].X, s.Balls[j].Y - s.Balls[i].Y}
+func (s *Simulation) collisionResponse(ball1, ball2 *Ball) {
 
-			if dist < s.Balls[i].R+s.Balls[j].R {
-				massConst1 := 2 * s.Balls[j].R / (s.Balls[i].R + s.Balls[j].R)
-				massConst2 := 2 * s.Balls[i].R / (s.Balls[i].R + s.Balls[j].R)
-				const1 := dotProduct(v12, c12) / dotProduct(c12, c12)
-				const2 := dotProduct(v21, c21) / dotProduct(c21, c21)
+	dx := ball1.X - ball2.X
+	dy := ball1.Y - ball2.Y
+	dist := math.Sqrt(dx*dx + dy*dy)
+	v12 := []float64{ball1.VX - ball2.VX, ball1.VY - ball2.VY}
+	v21 := []float64{ball2.VX - ball1.VX, ball2.VY - ball1.VY}
+	c12 := []float64{ball1.X - ball2.X, ball1.Y - ball2.Y}
+	c21 := []float64{ball2.X - ball1.X, ball2.Y - ball1.Y}
 
-				s.Balls[i].VX = s.Balls[i].VX - massConst1*const1*c12[0]
-				s.Balls[i].VY = s.Balls[i].VY - massConst1*const1*c12[1]
-				s.Balls[j].VX = s.Balls[j].VX - massConst2*const2*c21[0]
-				s.Balls[j].VY = s.Balls[j].VY - massConst2*const2*c21[1]
+	if dist < ball1.R+ball2.R {
+		massConst1 := 2 * ball2.R / (ball1.R + ball2.R)
+		massConst2 := 2 * ball1.R / (ball1.R + ball2.R)
+		const1 := dotProduct(v12, c12) / dotProduct(c12, c12)
+		const2 := dotProduct(v21, c21) / dotProduct(c21, c21)
 
-				// Ensure there is no clipping
-				s.Balls[i].X = s.Balls[j].X + (s.Balls[i].R+s.Balls[j].R)*(s.Balls[i].X-s.Balls[j].X)/dist
-				s.Balls[i].Y = s.Balls[j].Y + (s.Balls[i].R+s.Balls[j].R)*(s.Balls[i].Y-s.Balls[j].Y)/dist
+		ball1.VX = ball1.VX - massConst1*const1*c12[0]
+		ball1.VY = ball1.VY - massConst1*const1*c12[1]
+		ball2.VX = ball2.VX - massConst2*const2*c21[0]
+		ball2.VY = ball2.VY - massConst2*const2*c21[1]
 
-				if s.War {
-					if s.Balls[i].R > s.Balls[j].R {
-						s.Balls[j].Color = s.Balls[i].Color
-					} else {
-						s.Balls[i].Color = s.Balls[j].Color
-					}
-				}
+		// Ensure there is no clipping
+		ball1.X = ball2.X + (ball1.R+ball2.R)*(ball1.X-ball2.X)/dist
+		ball1.Y = ball2.Y + (ball1.R+ball2.R)*(ball1.Y-ball2.Y)/dist
+
+		if s.War {
+			if ball1.R > ball2.R {
+				ball2.Color = ball1.Color
+			} else {
+				ball1.Color = ball2.Color
 			}
 		}
 	}
 }
 
-func sweepAndPruneCollisionDetection(balls []Ball) {
-	sort.Slice(balls, func(i, j int) bool {
-		return balls[i].X < balls[j].X
+func (s *Simulation) dumbCollisionDetection() {
+	for i := 0; i < len(s.Balls); i++ {
+		for j := i + 1; j < len(s.Balls); j++ {
+			s.collisionResponse(&s.Balls[i], &s.Balls[j])
+		}
+	}
+}
+
+func (s *Simulation) sweepAndPruneCollisionDetection() {
+	sort.Slice(s.Balls, func(i, j int) bool {
+		return s.Balls[i].X < s.Balls[j].X
 	})
 
-	active := make([]Ball, len(balls)/10)
-	numActive := 0
+	var active []*Ball
+	active = append(active, &s.Balls[0])
 
-	for i := range balls {
+	for i := range s.Balls[1:] {
+		active = append(active, &s.Balls[i+1])
+
 		for j := range active {
-			dx := balls[i].X - active[j].X
-			dy := balls[i].Y - active[j].Y
-			dist := math.Sqrt(dx*dx + dy*dy)
-			v12 := []float64{balls[i].VX - active[j].VX, balls[i].VY - active[j].VY}
-			v21 := []float64{balls[j].VX - balls[i].VX, active[j].VY - balls[i].VY}
-			c12 := []float64{balls[i].X - active[j].X, balls[i].Y - active[j].Y}
-			c21 := []float64{balls[j].X - balls[i].X, active[j].Y - balls[i].Y}
-
-			if dist < balls[i].R+active[j].R {
-				massConst1 := 2 * active[j].R / (balls[i].R + active[j].R)
-				massConst2 := 2 * balls[i].R / (balls[i].R + active[j].R)
-				const1 := dotProduct(v12, c12) / dotProduct(c12, c12)
-				const2 := dotProduct(v21, c21) / dotProduct(c21, c21)
-
-				balls[i].VX = balls[i].VX - massConst1*const1*c12[0]
-				balls[i].VY = balls[i].VY - massConst1*const1*c12[1]
-				active[j].VX = active[j].VX - massConst2*const2*c21[0]
-				active[j].VY = active[j].VY - massConst2*const2*c21[1]
-
-				// Ensure there is no clipping
-				balls[i].X = active[j].X + (balls[i].R+active[j].R)*(balls[i].X-active[j].X)/dist
-				balls[i].Y = active[j].Y + (balls[i].R+active[j].R)*(balls[i].Y-active[j].Y)/dist
-
-				// Update active
-				numActive++
-				active[numActive] = balls[i]
+			for l := range active[j+1:] {
+				k := l + j + 1
+				s.collisionResponse(active[j], active[k])
+			}
+		}
+		// update active slice
+		for j := range active {
+			if active[j].X+active[j].R < s.Balls[i].X {
+				active = append(active[:j], active[j+1:]...)
+			} else {
+				break
 			}
 		}
 	}
@@ -119,6 +111,6 @@ func (s *Simulation) Update(dt float64) {
 
 		s.wallCollisionDetection(i)
 	}
-
+	s.sweepAndPruneCollisionDetection()
 	s.dumbCollisionDetection()
 }
