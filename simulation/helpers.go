@@ -34,18 +34,15 @@ func randomDirection() float64 {
 
 func (s *Simulation) GenerateBalls(n int) {
 	balls := make([]Ball, n)
-	centers := make([][]float64, n)
 	for i := range balls {
-		center := []float64{math.Max(50, rand.Float64()*750), math.Max(50, rand.Float64()*550)}
 		radius := math.Max(1, rand.Float64()*2) * s.SizeMultiplier
-		centers[i] = center
+		center := Point{X: math.Max(50, rand.Float64()*750), Y: math.Max(50, rand.Float64()*550)}
+		velocity := Point{X: randomDirection() * rand.Float64() * 3, Y: randomDirection() * rand.Float64() * 3}
 		balls[i] = Ball{
-			R:     radius,
-			X:     center[0],
-			Y:     center[1],
-			VX:    randomDirection() * rand.Float64() * 3,
-			VY:    randomDirection() * rand.Float64() * 3,
-			Color: randomColor(),
+			R:        radius,
+			Center:   center,
+			Velocity: velocity,
+			Color:    randomColor(),
 		}
 	}
 	s.Balls = balls

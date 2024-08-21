@@ -10,12 +10,10 @@ type Point struct {
 }
 
 type Ball struct {
-	R     float64 `json:"r"`
-	X     float64 `json:"x"`
-	Y     float64 `json:"y"`
-	VX    float64 `json:"vx"`
-	VY    float64 `json:"vy"`
-	Color string  `json:"color"`
+	R        float64 `json:"r"`
+	Center   Point   `json:"center"`
+	Velocity Point   `json:"velocity"`
+	Color    string  `json:"color"`
 }
 
 type Square struct {
@@ -23,7 +21,7 @@ type Square struct {
 	BottomRight Point   `json:"bottomRight"`
 	Velocity    float64 `json:"velocity"`
 	Weight      float64 `json:"weight"`
-  Width       float64
+	Width       float64
 }
 
 type Simulation struct {

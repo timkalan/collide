@@ -2,12 +2,15 @@
   import { onMount, onDestroy } from 'svelte';
   // import "./global.css";
 
-  interface Ball {
-    r: number;
+  interface Point {
     x: number;
     y: number;
-    vx: number;
-    vy: number;
+  }
+
+  interface Ball {
+    r: number;
+    center: Point;
+    velocity: Point;
     color: string;
   }
 
@@ -49,7 +52,7 @@
     // Draw each ball
     balls.forEach((ball) => {
       ctx.beginPath();
-      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+      ctx.arc(ball.center.x, ball.center.y, ball.r, 0, Math.PI * 2);
       ctx.fillStyle = ball.color;
       ctx.fill();
       ctx.closePath();
@@ -171,7 +174,7 @@
 
   const changeBallNumber = async () => {
     const quantity = parseInt((<HTMLInputElement>document.getElementById('quantity')).value);
-    if (quantity < 1 || quantity > 1000) {
+    if (quantity < 1 || quantity > 9999) {
       console.error('Invalid quantity:', quantity);
       return;
     }
@@ -219,7 +222,7 @@
     {:else}
       <button on:click={stopWar}>Reset</button>
     {/if}
-    <label for="quantity">Balls (1-1000):</label>
+    <label for="quantity">Balls (1-9999):</label>
     <input
       type="number"
       id="quantity"
